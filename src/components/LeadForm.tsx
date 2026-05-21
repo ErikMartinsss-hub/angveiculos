@@ -29,11 +29,11 @@ export default function LeadForm({ vehicleId, vehicleInfo }: Props) {
     e.preventDefault();
     setLoading(true);
 
-    const { data: lead, error: leadError } = await supabase
+    const leadId = crypto.randomUUID();
+
+    const { error: leadError } = await supabase
       .from("leads")
-      .insert([{ nome, telefone, email, observacao }])
-      .select()
-      .single();
+      .insert([{ id: leadId, nome, telefone, email, observacao }]);
 
     if (leadError) {
       alert("Erro ao enviar. Tente novamente.");
@@ -43,7 +43,7 @@ export default function LeadForm({ vehicleId, vehicleInfo }: Props) {
 
     await supabase.from("lead_views").insert([
       {
-        lead_id: lead.id,
+        lead_id: leadId,
         vehicle_id: vehicleId,
         vehicle_info: vehicleInfo,
       },
