@@ -28,6 +28,7 @@ export default async function AdminDashboard() {
 
   const registeredUsers = allUsers.filter((u: any) => u.email !== "admin@angveiculos.com");
   const pendentes = recentVisits.filter((v: any) => v.status === "pendente").length;
+  const totalLeads = recentLeads.length + registeredUsers.length;
 
   const recentActivity = [
     ...recentLeads.map((l: any) => ({
@@ -75,8 +76,8 @@ export default async function AdminDashboard() {
         />
         <StatCard
           label="Leads"
-          value={recentLeads.length}
-          detail="novos interesses"
+          value={totalLeads}
+          detail={totalLeads > 0 ? `${recentLeads.length} formulários + ${registeredUsers.length} usuários` : "novos interesses"}
         />
         <StatCard
           label="Visitas"
