@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import AdminLayout from "@/components/AdminLayout";
 import LeadCard from "./LeadCard";
 import { createServiceClient } from "@/lib/supabase-server";
@@ -8,14 +7,13 @@ export const dynamic = "force-dynamic";
 export default async function AdminLeads() {
   const service = createServiceClient();
 
-  const [leadsResult, favResult, visitResult, viewsResult, vehiclesResult, usersResult] =
+  const [leadsResult, favResult, visitResult, viewsResult, vehiclesResult] =
     await Promise.all([
       service.from("leads").select("*, lead_views(*)").order("created_at", { ascending: false }),
       service.from("favorites").select("*").order("created_at", { ascending: false }),
       service.from("visits").select("*").order("created_at", { ascending: false }),
       service.from("user_views").select("*").order("created_at", { ascending: false }),
       service.from("vehicles").select("id, marca, modelo"),
-      service.auth.admin.listUsers(),
     ]);
 
   const leads = leadsResult.data ?? [];
@@ -23,27 +21,33 @@ export default async function AdminLeads() {
   const visits = visitResult.data ?? [];
   const userViews = viewsResult.data ?? [];
   const vehicles = vehiclesResult.data ?? [];
-  const registeredUsers = usersResult.data?.users ?? [];
 
   const vehicleMap = new Map(vehicles.map((v: any) => [v.id, `${v.marca} ${v.modelo}`]));
 
-  const usersWithActivity = registeredUsers
-    .filter((u: any) => u.email !== "admin@angveiculos.com")
-    .map((u: any) => {
-      const meta = u.user_metadata ?? {};
-      return {
-        id: u.id,
-        nome: meta.nome ?? u.email?.split("@")[0] ?? "Sem nome",
-        email: u.email,
-        telefone: meta.telefone ?? "",
-        created_at: u.created_at,
-        last_sign_in: u.last_sign_in_at,
-        telelefone_raw: meta.telefone ?? "",
-        favorites: favorites.filter((f: any) => f.user_id === u.id),
-        visits: visits.filter((v: any) => v.user_id === u.id),
-        views: userViews.filter((v: any) => v.user_id === u.id),
-      };
-    });
+  // Agrupa por user_id a partir das tabelas de atividade
+  const userIds = new Set<string>();
+  visits.forEach((v: any) => v.user_id && userIds.add(v.user_id));
+  favorites.forEach((f: any) => f.user_id && userIds.add(f.user_id));
+  userViews.forEach((r: any) => r.user_id && userIds.add(r.user_id));
+
+  const usersWithActivity = Array.from(userIds).map((uid) => {
+    const userVisits = visits.filter((v: any) => v.user_id === uid);
+    const lastVisit = userVisits.length > 0 ? userVisits[0] : null;
+    return {
+      id: uid,
+      nome: lastVisit?.nome ?? "Usuário",
+      telefone: lastVisit?.telefone ?? "",
+      email: "",
+      created_at: userVisits
+        .concat(favorites.filter((f: any) => f.user_id === uid))
+        .concat(userViews.filter((r: any) => r.user_id === uid))
+        .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
+        ?.created_at ?? new Date().toISOString(),
+      favorites: favorites.filter((f: any) => f.user_id === uid),
+      visits: userVisits,
+      views: userViews.filter((r: any) => r.user_id === uid),
+    };
+  });
 
   return (
     <AdminLayout>
@@ -93,7 +97,7 @@ export default async function AdminLeads() {
                   telefone={user.telefone}
                   email={user.email}
                   created_at={user.created_at}
-                  last_sign_in={user.last_sign_in}
+                  last_sign_in={user.created_at}
                   items={[
                     ...user.views.map((v: any) => ({
                       type: "view" as const,

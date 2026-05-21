@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { Calendar, MessageCircle, UserPlus } from "lucide-react";
+import { Calendar, MessageCircle } from "lucide-react";
 import AdminLayout from "@/components/AdminLayout";
 import { createServiceClient } from "@/lib/supabase-server";
 
@@ -9,26 +8,33 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboard() {
   const service = createServiceClient();
 
-  const [vehiclesResult, leadsResult, visitsResult, usersResult] =
+  const [vehiclesResult, leadsResult, visitsResult, favResult, viewsResult] =
     await Promise.all([
       service.from("vehicles").select("*"),
       service.from("leads").select("*").order("created_at", { ascending: false }).limit(5),
       service.from("visits").select("*").order("created_at", { ascending: false }).limit(5),
-      service.auth.admin.listUsers(),
+      service.from("favorites").select("*"),
+      service.from("user_views").select("*"),
     ]);
 
   const vehicles = vehiclesResult.data ?? [];
   const recentLeads = leadsResult.data ?? [];
   const recentVisits = visitsResult.data ?? [];
-  const allUsers = usersResult.data?.users ?? [];
+  const favorites = favResult.data ?? [];
+  const userViews = viewsResult.data ?? [];
 
   const disponiveis = vehicles.filter((v) => v.status === "disponivel").length;
   const vendidos = vehicles.filter((v) => v.status === "vendido").length;
   const total = vehicles.length;
 
-  const registeredUsers = allUsers.filter((u: any) => u.email !== "admin@angveiculos.com");
+  const userIds = new Set<string>();
+  recentVisits.forEach((v: any) => v.user_id && userIds.add(v.user_id));
+  favorites.forEach((f: any) => f.user_id && userIds.add(f.user_id));
+  userViews.forEach((r: any) => r.user_id && userIds.add(r.user_id));
+
+  const registeredUsers = userIds.size;
   const pendentes = recentVisits.filter((v: any) => v.status === "pendente").length;
-  const totalLeads = recentLeads.length + registeredUsers.length;
+  const totalLeads = recentLeads.length + registeredUsers;
 
   const recentActivity = [
     ...recentLeads.map((l: any) => ({
@@ -43,13 +49,6 @@ export default async function AdminDashboard() {
       color: "text-blue-600 bg-blue-100",
       text: `${v.nome} agendou visita para ${v.data_visita} às ${v.horario}`,
       date: v.created_at,
-      link: "/admin/leads",
-    })),
-    ...registeredUsers.slice(0, 3).map((u: any) => ({
-      icon: UserPlus,
-      color: "text-purple-600 bg-purple-100",
-      text: `${u.user_metadata?.nome ?? u.email} criou conta`,
-      date: u.created_at,
       link: "/admin/leads",
     })),
   ]
@@ -77,7 +76,7 @@ export default async function AdminDashboard() {
         <StatCard
           label="Leads"
           value={totalLeads}
-          detail={totalLeads > 0 ? `${recentLeads.length} formulários + ${registeredUsers.length} usuários` : "novos interesses"}
+          detail={totalLeads > 0 ? `${recentLeads.length} formulários + ${registeredUsers} usuários` : "novos interesses"}
         />
         <StatCard
           label="Visitas"
@@ -87,7 +86,7 @@ export default async function AdminDashboard() {
         />
         <StatCard
           label="Usuários"
-          value={registeredUsers.length}
+          value={registeredUsers}
           detail="cadastrados"
         />
       </div>
