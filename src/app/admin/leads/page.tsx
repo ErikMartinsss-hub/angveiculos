@@ -1,24 +1,21 @@
 import { redirect } from "next/navigation";
 import AdminLayout from "@/components/AdminLayout";
 import LeadCard from "./LeadCard";
-import { createServerSupabase, createServiceClient } from "@/lib/supabase-server";
+import { createServiceClient } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminLeads() {
-  const supabase = await createServerSupabase();
-  const { data: { session } } = await supabase.auth.getSession();
-
-  if (!session) redirect("/admin/login");
+  const service = createServiceClient();
 
   const [leadsResult, favResult, visitResult, viewsResult, vehiclesResult, usersResult] =
     await Promise.all([
-      supabase.from("leads").select("*, lead_views(*)").order("created_at", { ascending: false }),
-      supabase.from("favorites").select("*").order("created_at", { ascending: false }),
-      supabase.from("visits").select("*").order("created_at", { ascending: false }),
-      supabase.from("user_views").select("*").order("created_at", { ascending: false }),
-      supabase.from("vehicles").select("id, marca, modelo"),
-      createServiceClient().auth.admin.listUsers(),
+      service.from("leads").select("*, lead_views(*)").order("created_at", { ascending: false }),
+      service.from("favorites").select("*").order("created_at", { ascending: false }),
+      service.from("visits").select("*").order("created_at", { ascending: false }),
+      service.from("user_views").select("*").order("created_at", { ascending: false }),
+      service.from("vehicles").select("id, marca, modelo"),
+      service.auth.admin.listUsers(),
     ]);
 
   const leads = leadsResult.data ?? [];
