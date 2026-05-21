@@ -1,15 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
+
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@supabase/supabase-js";
 import Header from "@/components/Header";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 export default function AtualizarSenha() {
   const [password, setPassword] = useState("");
@@ -20,8 +17,20 @@ export default function AtualizarSenha() {
   const [ready, setReady] = useState(false);
   const [checking, setChecking] = useState(true);
   const router = useRouter();
+  const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null);
+
+  function getSupabase() {
+    if (!supabaseRef.current) {
+      supabaseRef.current = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+    }
+    return supabaseRef.current;
+  }
 
   useEffect(() => {
+    const supabase = getSupabase();
     let cancelled = false;
 
     async function init() {
@@ -69,7 +78,7 @@ export default function AtualizarSenha() {
     }
 
     setLoading(true);
-    const { error } = await supabase.auth.updateUser({ password });
+    const { error } = await getSupabase().auth.updateUser({ password });
     setLoading(false);
 
     if (error) {

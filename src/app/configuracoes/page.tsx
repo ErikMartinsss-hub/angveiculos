@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -22,7 +24,8 @@ export default function Configuracoes() {
   const supabase = createClient();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(({ data }) => {
+      const user = data?.user;
       if (!user) { router.push("/login"); return; }
       setUserId(user.id);
       setEmail(user.email ?? "");
