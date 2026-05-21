@@ -1,0 +1,133 @@
+import VehicleCard from "@/components/VehicleCard";
+import VehicleFilter from "@/components/VehicleFilter";
+import Header from "@/components/Header";
+import { createServerSupabase } from "@/lib/supabase-server";
+import type { Vehicle } from "@/lib/types";
+
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const supabase = await createServerSupabase();
+  const { data: vehicles } = await supabase
+    .from("vehicles")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  const disponiveis = vehicles?.filter((v: Vehicle) => v.status === "disponivel") ?? [];
+  const destaques = disponiveis.filter((v: Vehicle) => v.destaque);
+
+  return (
+    <>
+      <Header />
+
+      <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 py-20 md:py-28">
+          <div className="max-w-2xl">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+              Encontre o veículo{" "}
+              <span className="text-red-500">perfeito</span> para você
+            </h1>
+            <p className="text-lg text-gray-400 mb-8">
+              Confira nossa seleção de veículos seminovos com procedência, qualidade e o melhor preço da região.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="#veiculos"
+                className="bg-red-600 text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-red-700 transition text-sm"
+              >
+                Ver veículos disponíveis
+              </a>
+              <a
+                href="https://wa.me/5511986022554"
+                target="_blank"
+                className="border border-gray-600 text-gray-300 px-8 py-3.5 rounded-xl font-semibold hover:border-red-600 hover:text-red-500 transition text-sm"
+              >
+                Fale conosco
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="veiculos" className="bg-white">
+        <div className="max-w-7xl mx-auto px-4 py-16">
+          {destaques.length > 0 && (
+            <>
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-2xl font-bold text-gray-900">Destaques</h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+                {destaques.slice(0, 3).map((vehicle: Vehicle) => (
+                  <VehicleCard key={vehicle.id} vehicle={vehicle} />
+                ))}
+              </div>
+            </>
+          )}
+
+          <h2 className="text-2xl font-bold text-gray-900 mb-8">
+            Todos os Veículos
+          </h2>
+
+          <VehicleFilter vehicles={disponiveis} />
+        </div>
+      </section>
+
+      <section className="bg-gray-50 py-12">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            Quer vender seu veículo?
+          </h3>
+          <p className="text-gray-500 mb-6">
+            Fazemos a avaliação e vendemos seu carro com rapidez e segurança.
+          </p>
+          <a
+            href="https://wa.me/5511986022554"
+            target="_blank"
+            className="btn-primary inline-block"
+          >
+            Fale conosco
+          </a>
+        </div>
+      </section>
+
+      <footer className="bg-gray-900 border-t border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <span className="text-lg font-bold text-white">
+                  Ang<span className="text-red-500">Veículos</span>
+                </span>
+              </div>
+              <p className="text-sm text-gray-500">
+                Sua agência de veículos de confiança. Qualidade e procedência em cada veículo.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Contato</h4>
+              <div className="space-y-2 text-sm text-gray-500">
+                <p>(11) 98602-2554</p>
+                <p>Erik Martins</p>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Horário</h4>
+              <div className="space-y-2 text-sm text-gray-500">
+                <p>Seg - Sex: 8h às 18h</p>
+                <p>Sábado: 8h às 13h</p>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-600">
+            <p>© 2024 Ang Veículos. Todos os direitos reservados.</p>
+          </div>
+        </div>
+      </footer>
+    </>
+  );
+}
