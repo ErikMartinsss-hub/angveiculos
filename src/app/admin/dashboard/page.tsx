@@ -2,22 +2,19 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Calendar, MessageCircle, UserPlus } from "lucide-react";
 import AdminLayout from "@/components/AdminLayout";
-import { createServerSupabase, createServiceClient } from "@/lib/supabase-server";
+import { createServiceClient } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  const supabase = await createServerSupabase();
-  const { data: { session } } = await supabase.auth.getSession();
-
-  if (!session) redirect("/admin/login");
+  const service = createServiceClient();
 
   const [vehiclesResult, leadsResult, visitsResult, usersResult] =
     await Promise.all([
-      supabase.from("vehicles").select("*"),
-      supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(5),
-      supabase.from("visits").select("*").order("created_at", { ascending: false }).limit(5),
-      createServiceClient().auth.admin.listUsers(),
+      service.from("vehicles").select("*"),
+      service.from("leads").select("*").order("created_at", { ascending: false }).limit(5),
+      service.from("visits").select("*").order("created_at", { ascending: false }).limit(5),
+      service.auth.admin.listUsers(),
     ]);
 
   const vehicles = vehiclesResult.data ?? [];
