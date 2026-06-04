@@ -16,14 +16,23 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-red-600 text-white px-6 py-3 rounded-lg font-semibold 
-           hover:bg-red-700 transition-all duration-200 
+    background-color: var(--primary);
+    @apply text-white px-6 py-3 rounded-lg font-semibold 
+           transition-all duration-200 
            active:scale-[0.98];
+  }
+  .btn-primary:hover {
+    background-color: var(--primary-dark);
   }
 
   .btn-outline {
-    @apply border-2 border-red-600 text-red-600 px-6 py-3 rounded-lg font-semibold
-           hover:bg-red-50 transition-all duration-200;
+    border-color: var(--primary);
+    color: var(--primary);
+    @apply px-6 py-3 rounded-lg font-semibold
+           transition-all duration-200;
+  }
+  .btn-outline:hover {
+    background-color: var(--primary-light);
   }
 
   .card {
@@ -33,7 +42,10 @@
 
   .input-field {
     @apply w-full border border-gray-300 rounded-lg px-4 py-2.5
-           focus:ring-2 focus:ring-red-500 focus:border-red-500
            outline-none transition-all duration-200;
+  }
+  .input-field:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent);
   }
 }

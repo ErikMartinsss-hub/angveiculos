@@ -32,6 +32,7 @@ export default function AdminLayout({
     { href: "/admin/dashboard", label: "Dashboard" },
     { href: "/admin/veiculos", label: "Veículos" },
     { href: "/admin/leads", label: "Leads" },
+    { href: "/admin/configuracoes", label: "Configurações" },
   ];
 
   return (

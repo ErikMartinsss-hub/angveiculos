@@ -8,10 +8,14 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const supabase = await createServerSupabase();
-  const { data: vehicles } = await supabase
-    .from("vehicles")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const [vehiclesResult, settingsResult] = await Promise.all([
+    supabase.from("vehicles").select("*").order("created_at", { ascending: false }),
+    supabase.from("site_settings").select("nome, primary_color").eq("id", 1).single(),
+  ]);
+
+  const vehicles = vehiclesResult.data;
+  const siteSettings = settingsResult.data;
+  const siteName = siteSettings?.nome ?? "Ang Veículos";
 
   const disponiveis = vehicles?.filter((v: Vehicle) => v.status === "disponivel") ?? [];
   const destaques = disponiveis.filter((v: Vehicle) => v.destaque);
@@ -117,7 +121,7 @@ export default async function Home() {
                   </svg>
                 </div>
                 <span className="text-lg font-bold text-white">
-                  Ang<span className="text-red-500">Veículos</span>
+                  {siteName}
                 </span>
               </div>
               <p className="text-sm text-gray-500">

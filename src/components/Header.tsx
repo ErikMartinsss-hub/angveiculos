@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase";
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<{ id: string; nome?: string } | null>(null);
+  const [settings, setSettings] = useState<{ nome: string; logo_url: string | null; primary_color: string } | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -19,30 +20,58 @@ export default function Header() {
         });
       }
     });
+    fetch("/api/site-settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.nome) {
+          setSettings(data);
+          document.documentElement.style.setProperty("--primary", data.primary_color);
+          document.documentElement.style.setProperty("--primary-dark", data.primary_color + "cc");
+          document.documentElement.style.setProperty("--primary-light", data.primary_color + "11");
+        }
+      });
   }, []);
+
+  const primaryColor = settings?.primary_color ?? "#dc2626";
+  const siteName = settings?.nome ?? "Ang Veículos";
+
+  function nomeCurto(nome: string) {
+    const partes = nome.split(" ");
+    return partes.length > 1 ? partes[partes.length - 1] : nome;
+  }
 
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center group-hover:bg-red-700 transition-colors">
-            <Car className="text-white" size={20} />
-          </div>
-          <span className="text-xl font-bold text-gray-900">
-            Ang<span className="text-red-600">Veículos</span>
-          </span>
+          {settings?.logo_url ? (
+            <img src={settings.logo_url} alt={siteName} className="h-10 object-contain" />
+          ) : (
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:opacity-90 transition-colors"
+              style={{ backgroundColor: primaryColor }}
+            >
+              <Car className="text-white" size={20} />
+            </div>
+          )}
+          <span className="text-xl font-bold text-gray-900">{siteName}</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
           <Link
             href="/"
-            className="text-sm font-medium text-gray-600 hover:text-red-600 transition-colors"
+            className="text-sm font-medium text-gray-600 transition-colors"
+            style={{ ['--hover-color' as any]: primaryColor }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
           >
             Início
           </Link>
           <Link
             href="/#veiculos"
-            className="text-sm font-medium text-gray-600 hover:text-red-600 transition-colors"
+            className="text-sm font-medium text-gray-600 transition-colors"
+            onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
           >
             Veículos
           </Link>
@@ -50,15 +79,19 @@ export default function Header() {
           {user ? (
             <Link
               href="/favoritos"
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-red-600 transition-colors"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors"
+              onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "")}
             >
               <Heart size={16} />
-              <span className="hidden lg:inline">{user.nome}</span>
+              <span className="hidden lg:inline">{nomeCurto(user.nome ?? "")}</span>
             </Link>
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-red-600 transition-colors"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors"
+              onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "")}
             >
               <User size={16} />
               Entrar
@@ -67,7 +100,9 @@ export default function Header() {
 
           <Link
             href="/admin/login"
-            className="text-sm font-medium text-gray-400 hover:text-red-600 transition-colors"
+            className="text-sm font-medium text-gray-400 transition-colors"
+            onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
           >
             Admin
           </Link>
@@ -75,7 +110,9 @@ export default function Header() {
 
         <button
           onClick={() => setOpen(!open)}
-          className="md:hidden p-2 text-gray-600 hover:text-red-600"
+          className="md:hidden p-2 text-gray-600 transition-colors"
+          onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "")}
         >
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -86,14 +123,18 @@ export default function Header() {
           <Link
             href="/"
             onClick={() => setOpen(false)}
-            className="block text-sm font-medium text-gray-600 hover:text-red-600"
+            className="block text-sm font-medium text-gray-600 transition-colors"
+            onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
           >
             Início
           </Link>
           <Link
             href="/#veiculos"
             onClick={() => setOpen(false)}
-            className="block text-sm font-medium text-gray-600 hover:text-red-600"
+            className="block text-sm font-medium text-gray-600 transition-colors"
+            onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
           >
             Veículos
           </Link>
@@ -101,7 +142,9 @@ export default function Header() {
             <Link
               href="/favoritos"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-red-600"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors"
+              onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "")}
             >
               <Heart size={16} /> {user.nome ?? "Favoritos"}
             </Link>
@@ -109,7 +152,9 @@ export default function Header() {
             <Link
               href="/login"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-red-600"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors"
+              onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "")}
             >
               <User size={16} /> Entrar
             </Link>
@@ -117,7 +162,9 @@ export default function Header() {
           <Link
             href="/admin/login"
             onClick={() => setOpen(false)}
-            className="block text-sm font-medium text-gray-400 hover:text-red-600"
+            className="block text-sm font-medium text-gray-400 transition-colors"
+            onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
           >
             Admin
           </Link>
