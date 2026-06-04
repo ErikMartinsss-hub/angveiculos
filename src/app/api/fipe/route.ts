@@ -20,13 +20,28 @@ function normalize(str: string) {
 
 function matchBrand(apiBrands: any[], searchName: string) {
   const n = normalize(searchName);
-  // exact normalized
-  let found = apiBrands.find((b: any) => normalize(b.name) === n);
+  // common mappings
+  const aliases: Record<string, string[]> = {
+    chevrolet: ["gmchevrolet", "chevrolet"],
+    volkswagen: ["vwvolkswagen"],
+    volvo: ["volvo"],
+    mercedes: ["mercedesbenz"],
+    mini: ["mini"],
+    mg: ["mg"],
+    rover: ["rover"],
+  };
+  const searchTerms = aliases[n] ?? [n];
+  for (const term of searchTerms) {
+    let found = apiBrands.find((b: any) => normalize(b.name) === term);
+    if (found) return found;
+    found = apiBrands.find((b: any) => normalize(b.name).includes(term));
+    if (found) return found;
+    found = apiBrands.find((b: any) => term.includes(normalize(b.name)));
+    if (found) return found;
+  }
+  // partial fallback
+  let found = apiBrands.find((b: any) => normalize(b.name).includes(n));
   if (found) return found;
-  // partial: api name contains search
-  found = apiBrands.find((b: any) => normalize(b.name).includes(n));
-  if (found) return found;
-  // partial: search contains api name
   found = apiBrands.find((b: any) => n.includes(normalize(b.name)));
   if (found) return found;
   return null;
@@ -53,7 +68,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "marca, modelo e ano obrigatórios" }, { status: 400 });
     }
 
-    const vehicleType = categoria === "moto" ? 2 : 1;
+    const vehicleType = categoria === "moto" ? "motorcycles" : "cars";
 
     // 1. Buscar marcas
     const marcas = await fetchJson(`${BASE}/${vehicleType}/brands`);
