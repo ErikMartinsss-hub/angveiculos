@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
@@ -10,9 +11,16 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [userEmail, setUserEmail] = useState("");
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user?.email) setUserEmail(data.user.email);
+    });
+  }, []);
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -50,12 +58,17 @@ export default function AdminLayout({
               ))}
             </nav>
           </div>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-red-600 hover:underline"
-          >
-            Sair
-          </button>
+          <div className="flex items-center gap-4">
+            {userEmail && (
+              <span className="text-sm text-gray-500">Bem-vindo, {userEmail}</span>
+            )}
+            <button
+              onClick={handleLogout}
+              className="text-sm text-red-600 hover:underline"
+            >
+              Sair
+            </button>
+          </div>
         </div>
       </header>
 
