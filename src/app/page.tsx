@@ -53,8 +53,6 @@ export default async function Home() {
                 target="_blank"
                 className="border px-8 py-3.5 rounded-xl font-semibold transition text-sm"
                 style={{ borderColor: heroDescColor, color: heroDescColor }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = heroHighlightColor; e.currentTarget.style.color = heroHighlightColor; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = heroDescColor; e.currentTarget.style.color = heroDescColor; }}
               >
                 Falar com Anizio
               </a>
@@ -63,8 +61,6 @@ export default async function Home() {
                 target="_blank"
                 className="border px-8 py-3.5 rounded-xl font-semibold transition text-sm"
                 style={{ borderColor: heroDescColor, color: heroDescColor }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = heroHighlightColor; e.currentTarget.style.color = heroHighlightColor; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = heroDescColor; e.currentTarget.style.color = heroDescColor; }}
               >
                 Falar com Gabriel
               </a>
