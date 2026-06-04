@@ -42,19 +42,19 @@ export default function Header() {
 
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
+      <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3 group">
           {settings?.logo_url ? (
-            <img src={settings.logo_url} alt={siteName} className="h-14 object-contain" />
+            <img src={settings.logo_url} alt={siteName} className="h-16 object-contain" />
           ) : (
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:opacity-90 transition-colors"
+              className="w-14 h-14 rounded-2xl flex items-center justify-center group-hover:opacity-90 transition-colors"
               style={{ backgroundColor: primaryColor }}
             >
-              <Car className="text-white" size={20} />
+              <Car className="text-white" size={28} />
             </div>
           )}
-          <span className="text-xl font-bold text-gray-900">{siteName}</span>
+          <span className="text-2xl font-bold text-gray-900">{siteName}</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
