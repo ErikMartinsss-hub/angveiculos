@@ -130,8 +130,8 @@ export default async function Home() {
                 <p>(11) 947831797</p>
                 <p>Contato ANIZIO  </p>
                 <br></br>
-                <P>(11) 942398993</P>
-                <P>Contato Gabriel</P>
+                <p>(11) 942398993</p>
+                <p>Contato Gabriel</p>
 
               </div>
             </div>
