@@ -10,12 +10,14 @@ export default async function Home() {
   const supabase = await createServerSupabase();
   const [vehiclesResult, settingsResult] = await Promise.all([
     supabase.from("vehicles").select("*").order("created_at", { ascending: false }),
-    supabase.from("site_settings").select("nome, primary_color").eq("id", 1).single(),
+    supabase.from("site_settings").select("*").eq("id", 1).single(),
   ]);
 
   const vehicles = vehiclesResult.data;
   const siteSettings = settingsResult.data;
   const siteName = siteSettings?.nome ?? "Ang Veículos";
+  const footerBg = siteSettings?.footer_bg ?? "#111827";
+  const footerTextColor = siteSettings?.footer_text_color ?? "#9ca3af";
 
   const disponiveis = vehicles?.filter((v: Vehicle) => v.status === "disponivel") ?? [];
   const destaques = disponiveis.filter((v: Vehicle) => v.destaque);
@@ -110,45 +112,44 @@ export default async function Home() {
         </div>
       </section>
 
-      <footer className="bg-gray-900 border-t border-gray-800">
+      <footer style={{ backgroundColor: footerBg, borderColor: footerTextColor + "30" }} className="border-t">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: "var(--primary)" }}>
                   <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
-                <span className="text-lg font-bold text-white">
+                <span className="text-lg font-bold" style={{ color: "#ffffff" }}>
                   {siteName}
                 </span>
               </div>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm" style={{ color: footerTextColor }}>
                 Sua agência de veículos de confiança. Qualidade e procedência em cada veículo.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold text-white mb-4">Contato</h4>
-              <div className="space-y-2 text-sm text-gray-500">
+              <h4 className="font-semibold mb-4" style={{ color: "#ffffff" }}>Contato</h4>
+              <div className="space-y-2 text-sm" style={{ color: footerTextColor }}>
                 <p>(11) 947831797</p>
                 <p>Contato Anizio  </p>
                 <br></br>
                 <p>(11) 942398993</p>
                 <p>Contato Gabriel</p>
-
               </div>
             </div>
             <div>
-              <h4 className="font-semibold text-white mb-4">Horário</h4>
-              <div className="space-y-2 text-sm text-gray-500">
+              <h4 className="font-semibold mb-4" style={{ color: "#ffffff" }}>Horário</h4>
+              <div className="space-y-2 text-sm" style={{ color: footerTextColor }}>
                 <p>Seg - Sex: 9h às 18h</p>
                 <p>Sábado: 9h às 13h</p>
               </div>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-600">
-            <p>© 2026 Ang Veículos. Todos os direitos reservados.</p>
+          <div className="mt-8 pt-8 text-center text-sm" style={{ borderTop: `1px solid ${footerTextColor}30`, color: footerTextColor }}>
+            <p>© 2026 {siteName}. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>

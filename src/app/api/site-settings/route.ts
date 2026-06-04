@@ -11,7 +11,7 @@ export async function GET() {
 
   if (error) {
     return NextResponse.json(
-      { nome: "Ang Veículos", primary_color: "#dc2626", logo_url: null },
+      { nome: "Ang Veículos", primary_color: "#dc2626", logo_url: null, header_bg: "#ffffff", header_text_color: "#111827", footer_bg: "#111827", footer_text_color: "#9ca3af" },
       { status: 200 }
     );
   }
@@ -27,12 +27,12 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { nome, logo_url, primary_color } = body;
+  const { nome, logo_url, primary_color, header_bg, header_text_color, footer_bg, footer_text_color } = body;
 
   const service = createServiceClient();
   const { error } = await service
     .from("site_settings")
-    .upsert({ id: 1, nome, logo_url, primary_color, updated_at: new Date().toISOString() });
+    .upsert({ id: 1, nome, logo_url, primary_color, header_bg, header_text_color, footer_bg, footer_text_color, updated_at: new Date().toISOString() });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

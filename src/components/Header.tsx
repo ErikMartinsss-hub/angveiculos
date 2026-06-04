@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase";
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<{ id: string; nome?: string } | null>(null);
-  const [settings, setSettings] = useState<{ nome: string; logo_url: string | null; primary_color: string } | null>(null);
+  const [settings, setSettings] = useState<{ nome: string; logo_url: string | null; primary_color: string; header_bg: string; header_text_color: string } | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -34,6 +34,8 @@ export default function Header() {
 
   const primaryColor = settings?.primary_color ?? "#dc2626";
   const siteName = settings?.nome ?? "Ang Veículos";
+  const headerBg = settings?.header_bg ?? "#ffffff";
+  const headerTextColor = settings?.header_text_color ?? "#111827";
 
   function nomeCurto(nome: string) {
     const partes = nome.split(" ");
@@ -41,7 +43,7 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <header className="border-b sticky top-0 z-50" style={{ backgroundColor: headerBg, borderColor: headerTextColor + "20" }}>
       <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
           {settings?.logo_url ? (
@@ -54,24 +56,25 @@ export default function Header() {
               <Car className="text-white" size={28} />
             </div>
           )}
-          <span className="text-2xl font-bold text-gray-900">{siteName}</span>
+          <span className="text-2xl font-bold" style={{ color: headerTextColor }}>{siteName}</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
           <Link
             href="/"
-            className="text-sm font-medium text-gray-600 transition-colors"
-            style={{ ['--hover-color' as any]: primaryColor }}
+            className="text-sm font-medium transition-colors"
+            style={{ color: headerTextColor }}
             onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = headerTextColor)}
           >
             Início
           </Link>
           <Link
             href="/#veiculos"
-            className="text-sm font-medium text-gray-600 transition-colors"
+            className="text-sm font-medium transition-colors"
+            style={{ color: headerTextColor }}
             onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = headerTextColor)}
           >
             Veículos
           </Link>
@@ -79,9 +82,10 @@ export default function Header() {
           {user ? (
             <Link
               href="/favoritos"
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors"
+              className="flex items-center gap-1.5 text-sm font-medium transition-colors"
+              style={{ color: headerTextColor }}
               onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = headerTextColor)}
             >
               <Heart size={16} />
               <span className="hidden lg:inline">{nomeCurto(user.nome ?? "")}</span>
@@ -89,9 +93,10 @@ export default function Header() {
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors"
+              className="flex items-center gap-1.5 text-sm font-medium transition-colors"
+              style={{ color: headerTextColor }}
               onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = headerTextColor)}
             >
               <User size={16} />
               Entrar
@@ -100,9 +105,10 @@ export default function Header() {
 
           <Link
             href="/admin/login"
-            className="text-sm font-medium text-gray-400 transition-colors"
+            className="text-sm font-medium transition-colors"
+            style={{ color: headerTextColor, opacity: 0.5 }}
             onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = headerTextColor)}
           >
             Admin
           </Link>
@@ -110,31 +116,34 @@ export default function Header() {
 
         <button
           onClick={() => setOpen(!open)}
-          className="md:hidden p-2 text-gray-600 transition-colors"
+          className="md:hidden p-2 transition-colors"
+          style={{ color: headerTextColor }}
           onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = headerTextColor)}
         >
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-3">
+        <div className="md:hidden border-t px-4 py-4 space-y-3" style={{ backgroundColor: headerBg, borderColor: headerTextColor + "20" }}>
           <Link
             href="/"
             onClick={() => setOpen(false)}
-            className="block text-sm font-medium text-gray-600 transition-colors"
+            className="block text-sm font-medium transition-colors"
+            style={{ color: headerTextColor }}
             onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = headerTextColor)}
           >
             Início
           </Link>
           <Link
             href="/#veiculos"
             onClick={() => setOpen(false)}
-            className="block text-sm font-medium text-gray-600 transition-colors"
+            className="block text-sm font-medium transition-colors"
+            style={{ color: headerTextColor }}
             onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = headerTextColor)}
           >
             Veículos
           </Link>
@@ -142,9 +151,10 @@ export default function Header() {
             <Link
               href="/favoritos"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors"
+              className="flex items-center gap-1.5 text-sm font-medium transition-colors"
+              style={{ color: headerTextColor }}
               onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = headerTextColor)}
             >
               <Heart size={16} /> {user.nome ?? "Favoritos"}
             </Link>
@@ -152,9 +162,10 @@ export default function Header() {
             <Link
               href="/login"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 transition-colors"
+              className="flex items-center gap-1.5 text-sm font-medium transition-colors"
+              style={{ color: headerTextColor }}
               onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = headerTextColor)}
             >
               <User size={16} /> Entrar
             </Link>
@@ -162,9 +173,10 @@ export default function Header() {
           <Link
             href="/admin/login"
             onClick={() => setOpen(false)}
-            className="block text-sm font-medium text-gray-400 transition-colors"
+            className="block text-sm font-medium transition-colors"
+            style={{ color: headerTextColor, opacity: 0.5 }}
             onMouseEnter={(e) => (e.currentTarget.style.color = primaryColor)}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = headerTextColor)}
           >
             Admin
           </Link>
