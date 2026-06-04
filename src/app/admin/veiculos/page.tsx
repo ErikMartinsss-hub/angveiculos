@@ -4,6 +4,7 @@ import AdminLayout from "@/components/AdminLayout";
 import { createServerSupabase } from "@/lib/supabase-server";
 import type { Vehicle } from "@/lib/types";
 import DeleteButton from "./DeleteButton";
+import ExportCsvButton from "@/components/ExportCsvButton";
 
 export const dynamic = "force-dynamic";
 
@@ -22,12 +23,15 @@ export default async function AdminVeiculos() {
     <AdminLayout>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Veículos</h1>
-        <Link
-          href="/admin/veiculos/novo"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition"
-        >
-          + Novo Veículo
-        </Link>
+        <div className="flex gap-2">
+          {vehicles && vehicles.length > 0 && <ExportCsvButton vehicles={vehicles} />}
+          <Link
+            href="/admin/veiculos/novo"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition"
+          >
+            + Novo Veículo
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
