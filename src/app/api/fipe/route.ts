@@ -20,15 +20,10 @@ function normalize(str: string) {
 
 function matchBrand(apiBrands: any[], searchName: string) {
   const n = normalize(searchName);
-  // common mappings
   const aliases: Record<string, string[]> = {
     chevrolet: ["gmchevrolet", "chevrolet"],
     volkswagen: ["vwvolkswagen"],
-    volvo: ["volvo"],
     mercedes: ["mercedesbenz"],
-    mini: ["mini"],
-    mg: ["mg"],
-    rover: ["rover"],
   };
   const searchTerms = aliases[n] ?? [n];
   for (const term of searchTerms) {
@@ -39,7 +34,6 @@ function matchBrand(apiBrands: any[], searchName: string) {
     found = apiBrands.find((b: any) => term.includes(normalize(b.name)));
     if (found) return found;
   }
-  // partial fallback
   let found = apiBrands.find((b: any) => normalize(b.name).includes(n));
   if (found) return found;
   found = apiBrands.find((b: any) => n.includes(normalize(b.name)));
@@ -47,18 +41,17 @@ function matchBrand(apiBrands: any[], searchName: string) {
   return null;
 }
 
-function matchModel(apiModels: any[], searchName: string) {
+function matchModels(apiModels: any[], searchName: string) {
   const n = normalize(searchName);
-  // exact
-  let found = apiModels.find((m: any) => normalize(m.name) === n);
-  if (found) return found;
-  // api model starts with search
-  found = apiModels.find((m: any) => normalize(m.name).startsWith(n));
-  if (found) return found;
-  // api model contains search
-  found = apiModels.find((m: any) => normalize(m.name).includes(n));
-  if (found) return found;
-  return null;
+  return apiModels.filter((m: any) => normalize(m.name).includes(n));
+}
+
+function matchYear(anos: any[], targetAno: string) {
+  return anos.find(
+    (a: any) =>
+      String(a.code).startsWith(targetAno) ||
+      String(a.name).startsWith(targetAno)
+  );
 }
 
 export async function POST(req: Request) {
@@ -69,48 +62,59 @@ export async function POST(req: Request) {
     }
 
     const vehicleType = categoria === "moto" ? "motorcycles" : "cars";
+    const anoStr = String(ano);
 
-    // 1. Buscar marcas
+    // 1. Marcas
     const marcas = await fetchJson(`${BASE}/${vehicleType}/brands`);
     if (!marcas) return NextResponse.json({ error: "Erro ao consultar marcas" }, { status: 502 });
 
     const marcaObj = matchBrand(marcas, marca);
     if (!marcaObj) return NextResponse.json({ error: `Marca "${marca}" não encontrada` }, { status: 404 });
 
-    // 2. Buscar modelos
+    // 2. Modelos
     const modelosData = await fetchJson(`${BASE}/${vehicleType}/brands/${marcaObj.code}/models`);
     if (!modelosData) return NextResponse.json({ error: "Erro ao consultar modelos" }, { status: 502 });
 
-    const modeloObj = matchModel(modelosData, modelo);
-    if (!modeloObj) return NextResponse.json({ error: `Modelo "${modelo}" não encontrado` }, { status: 404 });
+    const matchingModels = matchModels(modelosData, modelo);
+    if (matchingModels.length === 0) {
+      return NextResponse.json({ error: `Modelo "${modelo}" não encontrado` }, { status: 404 });
+    }
 
-    // 3. Buscar anos
-    const anos = await fetchJson(`${BASE}/${vehicleType}/brands/${marcaObj.code}/models/${modeloObj.code}/years`);
-    if (!anos) return NextResponse.json({ error: "Erro ao consultar anos" }, { status: 502 });
+    // 3. Para cada modelo candidato, busca anos e tenta achar o ano alvo
+    for (const m of matchingModels.slice(0, 10)) {
+      const anos = await fetchJson(
+        `${BASE}/${vehicleType}/brands/${marcaObj.code}/models/${m.code}/years`
+      );
+      if (!anos) continue;
 
-    const anoStr = String(ano);
-    const anoMatch = anos.find((a: any) => String(a.code).startsWith(anoStr) || String(a.name).startsWith(anoStr));
-    if (!anoMatch) return NextResponse.json({ error: `Ano ${ano} não encontrado` }, { status: 404 });
+      const anoMatch = matchYear(anos, anoStr);
+      if (!anoMatch) continue;
 
-    // 4. Buscar preço
-    const precoData = await fetchJson(
-      `${BASE}/${vehicleType}/brands/${marcaObj.code}/models/${modeloObj.code}/years/${anoMatch.code}`
+      // 4. Preço
+      const precoData = await fetchJson(
+        `${BASE}/${vehicleType}/brands/${marcaObj.code}/models/${m.code}/years/${anoMatch.code}`
+      );
+      if (!precoData) continue;
+
+      const valor = precoData.price;
+      const valorNumerico = Number(
+        valor.replace("R$ ", "").replace(/\./g, "").replace(",", ".")
+      );
+
+      return NextResponse.json({
+        fipe: valorNumerico,
+        fipe_raw: valor,
+        mes_referencia: precoData.referenceMonth,
+        codigo_fipe: precoData.codeFipe,
+        combustivel: precoData.fuel,
+        sigla_combustivel: precoData.fuelAcronym,
+      });
+    }
+
+    return NextResponse.json(
+      { error: `Nenhuma versão do ${modelo} encontrada para o ano ${ano}` },
+      { status: 404 }
     );
-    if (!precoData) return NextResponse.json({ error: "Erro ao consultar preço" }, { status: 502 });
-
-    const valor = precoData.price;
-    const valorNumerico = Number(
-      valor.replace("R$ ", "").replace(/\./g, "").replace(",", ".")
-    );
-
-    return NextResponse.json({
-      fipe: valorNumerico,
-      fipe_raw: valor,
-      mes_referencia: precoData.referenceMonth,
-      codigo_fipe: precoData.codeFipe,
-      combustivel: precoData.fuel,
-      sigla_combustivel: precoData.fuelAcronym,
-    });
   } catch (err) {
     console.error("FIPE error:", err);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
