@@ -17,6 +17,8 @@ type Settings = {
   hero_text_color: string;
   hero_desc_color: string;
   hero_highlight_color: string;
+  hero_btn_outline: string;
+  hero_btn_outline_hover: string;
 };
 
 export default function AdminConfig() {
@@ -32,6 +34,8 @@ export default function AdminConfig() {
     hero_text_color: "#ffffff",
     hero_desc_color: "#9ca3af",
     hero_highlight_color: "#ef4444",
+    hero_btn_outline: "#9ca3af",
+    hero_btn_outline_hover: "#ef4444",
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -298,24 +302,60 @@ export default function AdminConfig() {
                 />
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Destaque (perfeito)</label>
-              <div className="flex gap-2 items-center">
-                <input
-                  type="color"
-                  value={settings.hero_highlight_color}
-                  onChange={(e) => setSettings({ ...settings, hero_highlight_color: e.target.value })}
-                  className="w-10 h-9 rounded cursor-pointer border"
-                />
-                <input
-                  type="text"
-                  value={settings.hero_highlight_color}
-                  onChange={(e) => setSettings({ ...settings, hero_highlight_color: e.target.value })}
-                  className="flex-1 border rounded-lg px-2 py-1.5 font-mono text-sm"
-                />
+              <div>
+                <label className="block text-sm font-medium mb-1">Destaque (perfeito)</label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="color"
+                    value={settings.hero_highlight_color}
+                    onChange={(e) => setSettings({ ...settings, hero_highlight_color: e.target.value })}
+                    className="w-10 h-9 rounded cursor-pointer border"
+                  />
+                  <input
+                    type="text"
+                    value={settings.hero_highlight_color}
+                    onChange={(e) => setSettings({ ...settings, hero_highlight_color: e.target.value })}
+                    className="flex-1 border rounded-lg px-2 py-1.5 font-mono text-sm"
+                  />
+                </div>
               </div>
             </div>
-          </div>
+            <div className="grid grid-cols-2 gap-4 mt-4 border-t pt-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Botão outline (Falar com)</label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="color"
+                    value={settings.hero_btn_outline}
+                    onChange={(e) => setSettings({ ...settings, hero_btn_outline: e.target.value })}
+                    className="w-10 h-9 rounded cursor-pointer border"
+                  />
+                  <input
+                    type="text"
+                    value={settings.hero_btn_outline}
+                    onChange={(e) => setSettings({ ...settings, hero_btn_outline: e.target.value })}
+                    className="flex-1 border rounded-lg px-2 py-1.5 font-mono text-sm"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Botão hover</label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="color"
+                    value={settings.hero_btn_outline_hover}
+                    onChange={(e) => setSettings({ ...settings, hero_btn_outline_hover: e.target.value })}
+                    className="w-10 h-9 rounded cursor-pointer border"
+                  />
+                  <input
+                    type="text"
+                    value={settings.hero_btn_outline_hover}
+                    onChange={(e) => setSettings({ ...settings, hero_btn_outline_hover: e.target.value })}
+                    className="flex-1 border rounded-lg px-2 py-1.5 font-mono text-sm"
+                  />
+                </div>
+              </div>
+            </div>
         </div>
 
         {message && (

@@ -22,6 +22,8 @@ export default async function Home() {
   const heroTextColor = siteSettings?.hero_text_color ?? "#ffffff";
   const heroDescColor = siteSettings?.hero_desc_color ?? "#9ca3af";
   const heroHighlightColor = siteSettings?.hero_highlight_color ?? "#ef4444";
+  const heroBtnOutline = siteSettings?.hero_btn_outline ?? "#9ca3af";
+  const heroBtnOutlineHover = siteSettings?.hero_btn_outline_hover ?? "#ef4444";
 
   const disponiveis = vehicles?.filter((v: Vehicle) => v.status === "disponivel") ?? [];
   const destaques = disponiveis.filter((v: Vehicle) => v.destaque);
@@ -31,6 +33,10 @@ export default async function Home() {
       <Header />
 
       <section style={{ backgroundColor: heroBg }}>
+        <style>{`
+          .hero-btn-outline { border-color: ${heroBtnOutline}; color: ${heroBtnOutline}; }
+          .hero-btn-outline:hover { border-color: ${heroBtnOutlineHover}; color: ${heroBtnOutlineHover}; }
+        `}</style>
         <div className="max-w-7xl mx-auto px-4 py-20 md:py-28">
           <div className="max-w-2xl">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight" style={{ color: heroTextColor }}>
@@ -51,16 +57,14 @@ export default async function Home() {
               <a
                 href="https://wa.me/5511947831797"
                 target="_blank"
-                className="border px-8 py-3.5 rounded-xl font-semibold transition text-sm"
-                style={{ borderColor: heroDescColor, color: heroDescColor }}
+                className="hero-btn-outline border px-8 py-3.5 rounded-xl font-semibold transition text-sm"
               >
                 Falar com Anizio
               </a>
               <a
                 href="https://wa.me/5511942398993"
                 target="_blank"
-                className="border px-8 py-3.5 rounded-xl font-semibold transition text-sm"
-                style={{ borderColor: heroDescColor, color: heroDescColor }}
+                className="hero-btn-outline border px-8 py-3.5 rounded-xl font-semibold transition text-sm"
               >
                 Falar com Gabriel
               </a>
