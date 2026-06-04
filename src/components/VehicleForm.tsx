@@ -48,6 +48,7 @@ export default function VehicleForm({ vehicle }: Props) {
   const [existingFotos, setExistingFotos] = useState<string[]>(
     vehicle?.fotos ?? []
   );
+  const [mainPhotoIndex, setMainPhotoIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [fipeLoading, setFipeLoading] = useState(false);
 
@@ -120,7 +121,16 @@ export default function VehicleForm({ vehicle }: Props) {
   }
 
   function removeExistingFoto(index: number) {
+    if (mainPhotoIndex === index) setMainPhotoIndex(0);
+    else if (mainPhotoIndex > index) setMainPhotoIndex((i) => i - 1);
     setExistingFotos((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function removeNewFile(index: number) {
+    const offset = existingFotos.length;
+    if (mainPhotoIndex === offset + index) setMainPhotoIndex(0);
+    else if (mainPhotoIndex > offset + index) setMainPhotoIndex((i) => i - 1);
+    setFiles((prev) => prev.filter((_, i) => i !== index));
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -152,9 +162,13 @@ export default function VehicleForm({ vehicle }: Props) {
       uploadedUrls.push(urlData.publicUrl);
     }
 
+    const mainPhoto = uploadedUrls[mainPhotoIndex];
+    const rest = uploadedUrls.filter((_, i) => i !== mainPhotoIndex);
+    const fotosOrdenadas = [mainPhoto, ...rest];
+
     const payload = {
       ...form,
-      fotos: uploadedUrls,
+      fotos: fotosOrdenadas,
     };
 
     if (isEditing) {
@@ -470,26 +484,35 @@ export default function VehicleForm({ vehicle }: Props) {
       <div className="mb-6">
         <label className="block text-sm font-medium mb-3">Fotos</label>
 
-        {existingFotos.length > 0 && (
-          <div className="grid grid-cols-4 gap-2 mb-4">
-            {existingFotos.map((foto, i) => (
-              <div key={i} className="relative group">
-                <img
-                  src={foto}
-                  alt={`Foto ${i + 1}`}
-                  className="w-full aspect-[4/3] object-cover rounded"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeExistingFoto(i)}
-                  className="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition"
-                >
-                  Remover
-                </button>
-              </div>
-            ))}
-          </div>
+        {(existingFotos.length > 0 || files.length > 0) && (
+          <p className="text-xs text-gray-500 mb-2">
+            Clique na foto para marcá-la como <strong>principal</strong>
+          </p>
         )}
+
+        <div className="grid grid-cols-4 gap-2 mb-4">
+          {existingFotos.map((foto, i) => (
+            <PhotoThumb
+              key={`ex-${i}`}
+              src={foto}
+              isMain={mainPhotoIndex === i}
+              onSelect={() => setMainPhotoIndex(i)}
+              onRemove={() => removeExistingFoto(i)}
+            />
+          ))}
+          {files.map((file, i) => {
+            const idx = existingFotos.length + i;
+            return (
+              <PhotoThumb
+                key={`new-${i}`}
+                src={URL.createObjectURL(file)}
+                isMain={mainPhotoIndex === idx}
+                onSelect={() => setMainPhotoIndex(idx)}
+                onRemove={() => removeNewFile(i)}
+              />
+            );
+          })}
+        </div>
 
         <div className="flex gap-3">
           <label className="flex-1 flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer hover:border-red-400 hover:bg-red-50 transition">
@@ -526,27 +549,6 @@ export default function VehicleForm({ vehicle }: Props) {
             />
           </label>
         </div>
-
-        {files.length > 0 && (
-          <div className="grid grid-cols-4 gap-2 mt-3">
-            {files.map((file, i) => (
-              <div key={i} className="relative">
-                <img
-                  src={URL.createObjectURL(file)}
-                  alt={`Preview ${i + 1}`}
-                  className="w-full aspect-[4/3] object-cover rounded"
-                />
-                <button
-                  type="button"
-                  onClick={() => setFiles((prev) => prev.filter((_, j) => j !== i))}
-                  className="absolute top-1 right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded opacity-0 hover:opacity-100 transition"
-                >
-                  X
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       <button
@@ -580,6 +582,49 @@ function Field({
         {required && <span className="text-red-500">*</span>}
       </label>
       {children}
+    </div>
+  );
+}
+
+function PhotoThumb({
+  src,
+  isMain,
+  onSelect,
+  onRemove,
+}: {
+  src: string;
+  isMain: boolean;
+  onSelect: () => void;
+  onRemove: () => void;
+}) {
+  return (
+    <div className="relative group">
+      <img
+        src={src}
+        alt=""
+        className={`w-full aspect-[4/3] object-cover rounded cursor-pointer ${
+          isMain ? "ring-2 ring-red-600" : ""
+        }`}
+        onClick={onSelect}
+      />
+      <button
+        type="button"
+        onClick={(e) => { e.stopPropagation(); onSelect(); }}
+        className={`absolute bottom-1 left-1 text-xs px-2 py-0.5 rounded font-semibold transition ${
+          isMain
+            ? "bg-red-600 text-white"
+            : "bg-black/50 text-white opacity-0 group-hover:opacity-100"
+        }`}
+      >
+        {isMain ? "★ Principal" : "☆ Principal"}
+      </button>
+      <button
+        type="button"
+        onClick={(e) => { e.stopPropagation(); onRemove(); }}
+        className="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition"
+      >
+        Remover
+      </button>
     </div>
   );
 }

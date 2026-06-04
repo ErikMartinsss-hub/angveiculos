@@ -128,7 +128,7 @@ export default async function Home() {
               <h4 className="font-semibold text-white mb-4">Contato</h4>
               <div className="space-y-2 text-sm text-gray-500">
                 <p>(11) 947831797</p>
-                <p>Contato ANIZIO  </p>
+                <p>Contato Anizio  </p>
                 <br></br>
                 <p>(11) 942398993</p>
                 <p>Contato Gabriel</p>
