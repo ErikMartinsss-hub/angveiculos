@@ -38,11 +38,18 @@ export default async function Home() {
                 Ver veículos disponíveis
               </a>
               <a
-                href="https://wa.me/5511986022554"
+                href="https://wa.me/5511947831797"
                 target="_blank"
                 className="border border-gray-600 text-gray-300 px-8 py-3.5 rounded-xl font-semibold hover:border-red-600 hover:text-red-500 transition text-sm"
               >
-                Fale conosco
+                Falar com Anizio
+              </a>
+              <a
+                href="https://wa.me/5511942398993"
+                target="_blank"
+                className="border border-gray-600 text-gray-300 px-8 py-3.5 rounded-xl font-semibold hover:border-red-600 hover:text-red-500 transition text-sm"
+              >
+                Falar com Gabriel
               </a>
             </div>
           </div>
@@ -80,13 +87,22 @@ export default async function Home() {
           <p className="text-gray-500 mb-6">
             Fazemos a avaliação e vendemos seu carro com rapidez e segurança.
           </p>
-          <a
-            href="https://wa.me/5511986022554"
-            target="_blank"
-            className="btn-primary inline-block"
-          >
-            Fale conosco
-          </a>
+          <div className="flex flex-wrap justify-center gap-3">
+            <a
+              href="https://wa.me/5511947831797"
+              target="_blank"
+              className="btn-primary inline-block"
+            >
+              Falar com Anizio
+            </a>
+            <a
+              href="https://wa.me/5511942398993"
+              target="_blank"
+              className="btn-primary inline-block"
+            >
+              Falar com Gabriel
+            </a>
+          </div>
         </div>
       </section>
 
@@ -111,20 +127,24 @@ export default async function Home() {
             <div>
               <h4 className="font-semibold text-white mb-4">Contato</h4>
               <div className="space-y-2 text-sm text-gray-500">
-                <p>(11) 98602-2554</p>
-                <p>Erik Martins</p>
+                <p>(11) 947831797</p>
+                <p>Contato ANIZIO  </p>
+                <br></br>
+                <P>(11) 942398993</P>
+                <P>Contato Gabriel</P>
+
               </div>
             </div>
             <div>
               <h4 className="font-semibold text-white mb-4">Horário</h4>
               <div className="space-y-2 text-sm text-gray-500">
-                <p>Seg - Sex: 8h às 18h</p>
-                <p>Sábado: 8h às 13h</p>
+                <p>Seg - Sex: 9h às 18h</p>
+                <p>Sábado: 9h às 13h</p>
               </div>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-600">
-            <p>© 2024 Ang Veículos. Todos os direitos reservados.</p>
+            <p>© 2026 Ang Veículos. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
