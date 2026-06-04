@@ -18,6 +18,10 @@ export default async function Home() {
   const siteName = siteSettings?.nome ?? "Ang Veículos";
   const footerBg = siteSettings?.footer_bg ?? "#111827";
   const footerTextColor = siteSettings?.footer_text_color ?? "#9ca3af";
+  const heroBg = siteSettings?.hero_bg ?? "#111827";
+  const heroTextColor = siteSettings?.hero_text_color ?? "#ffffff";
+  const heroDescColor = siteSettings?.hero_desc_color ?? "#9ca3af";
+  const heroHighlightColor = siteSettings?.hero_highlight_color ?? "#ef4444";
 
   const disponiveis = vehicles?.filter((v: Vehicle) => v.status === "disponivel") ?? [];
   const destaques = disponiveis.filter((v: Vehicle) => v.destaque);
@@ -26,34 +30,41 @@ export default async function Home() {
     <>
       <Header />
 
-      <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+      <section style={{ backgroundColor: heroBg }}>
         <div className="max-w-7xl mx-auto px-4 py-20 md:py-28">
           <div className="max-w-2xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight" style={{ color: heroTextColor }}>
               Encontre o veículo{" "}
-              <span className="text-red-500">perfeito</span> para você
+              <span style={{ color: heroHighlightColor }}>perfeito</span> para você
             </h1>
-            <p className="text-lg text-gray-400 mb-8">
+            <p className="text-lg mb-8" style={{ color: heroDescColor }}>
               Confira nossa seleção de veículos seminovos com procedência, qualidade e o melhor preço da região.
             </p>
             <div className="flex flex-wrap gap-3">
               <a
                 href="#veiculos"
-                className="bg-red-600 text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-red-700 transition text-sm"
+                className="btn-primary px-8 py-3.5 rounded-xl font-semibold transition text-sm"
+                style={{ backgroundColor: "var(--primary)" }}
               >
                 Ver veículos disponíveis
               </a>
               <a
                 href="https://wa.me/5511947831797"
                 target="_blank"
-                className="border border-gray-600 text-gray-300 px-8 py-3.5 rounded-xl font-semibold hover:border-red-600 hover:text-red-500 transition text-sm"
+                className="border px-8 py-3.5 rounded-xl font-semibold transition text-sm"
+                style={{ borderColor: heroDescColor, color: heroDescColor }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = heroHighlightColor; e.currentTarget.style.color = heroHighlightColor; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = heroDescColor; e.currentTarget.style.color = heroDescColor; }}
               >
                 Falar com Anizio
               </a>
               <a
                 href="https://wa.me/5511942398993"
                 target="_blank"
-                className="border border-gray-600 text-gray-300 px-8 py-3.5 rounded-xl font-semibold hover:border-red-600 hover:text-red-500 transition text-sm"
+                className="border px-8 py-3.5 rounded-xl font-semibold transition text-sm"
+                style={{ borderColor: heroDescColor, color: heroDescColor }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = heroHighlightColor; e.currentTarget.style.color = heroHighlightColor; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = heroDescColor; e.currentTarget.style.color = heroDescColor; }}
               >
                 Falar com Gabriel
               </a>

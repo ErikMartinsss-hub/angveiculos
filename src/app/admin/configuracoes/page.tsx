@@ -13,6 +13,10 @@ type Settings = {
   header_text_color: string;
   footer_bg: string;
   footer_text_color: string;
+  hero_bg: string;
+  hero_text_color: string;
+  hero_desc_color: string;
+  hero_highlight_color: string;
 };
 
 export default function AdminConfig() {
@@ -24,6 +28,10 @@ export default function AdminConfig() {
     header_text_color: "#111827",
     footer_bg: "#111827",
     footer_text_color: "#9ca3af",
+    hero_bg: "#111827",
+    hero_text_color: "#ffffff",
+    hero_desc_color: "#9ca3af",
+    hero_highlight_color: "#ef4444",
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -229,6 +237,80 @@ export default function AdminConfig() {
                   type="text"
                   value={settings.footer_text_color}
                   onChange={(e) => setSettings({ ...settings, footer_text_color: e.target.value })}
+                  className="flex-1 border rounded-lg px-2 py-1.5 font-mono text-sm"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-5 border-t pt-5">
+          <h3 className="font-semibold text-gray-900 mb-3">Hero (Seção Principal)</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Fundo</label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="color"
+                  value={settings.hero_bg}
+                  onChange={(e) => setSettings({ ...settings, hero_bg: e.target.value })}
+                  className="w-10 h-9 rounded cursor-pointer border"
+                />
+                <input
+                  type="text"
+                  value={settings.hero_bg}
+                  onChange={(e) => setSettings({ ...settings, hero_bg: e.target.value })}
+                  className="flex-1 border rounded-lg px-2 py-1.5 font-mono text-sm"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Título</label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="color"
+                  value={settings.hero_text_color}
+                  onChange={(e) => setSettings({ ...settings, hero_text_color: e.target.value })}
+                  className="w-10 h-9 rounded cursor-pointer border"
+                />
+                <input
+                  type="text"
+                  value={settings.hero_text_color}
+                  onChange={(e) => setSettings({ ...settings, hero_text_color: e.target.value })}
+                  className="flex-1 border rounded-lg px-2 py-1.5 font-mono text-sm"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Descrição</label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="color"
+                  value={settings.hero_desc_color}
+                  onChange={(e) => setSettings({ ...settings, hero_desc_color: e.target.value })}
+                  className="w-10 h-9 rounded cursor-pointer border"
+                />
+                <input
+                  type="text"
+                  value={settings.hero_desc_color}
+                  onChange={(e) => setSettings({ ...settings, hero_desc_color: e.target.value })}
+                  className="flex-1 border rounded-lg px-2 py-1.5 font-mono text-sm"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Destaque (perfeito)</label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="color"
+                  value={settings.hero_highlight_color}
+                  onChange={(e) => setSettings({ ...settings, hero_highlight_color: e.target.value })}
+                  className="w-10 h-9 rounded cursor-pointer border"
+                />
+                <input
+                  type="text"
+                  value={settings.hero_highlight_color}
+                  onChange={(e) => setSettings({ ...settings, hero_highlight_color: e.target.value })}
                   className="flex-1 border rounded-lg px-2 py-1.5 font-mono text-sm"
                 />
               </div>
