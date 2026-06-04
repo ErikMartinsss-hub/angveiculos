@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase-server";
+import { createServerSupabase, createServiceClient } from "@/lib/supabase-server";
 
 export async function POST(request: Request) {
+  const supabase = await createServerSupabase();
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  }
+
   const { visitId, status } = await request.json();
 
   if (!visitId || !status) {
@@ -12,8 +18,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Status inválido" }, { status: 400 });
   }
 
-  const supabase = createServiceClient();
-  const { error } = await supabase
+  const service = createServiceClient();
+  const { error } = await service
     .from("visits")
     .update({ status })
     .eq("id", visitId);
