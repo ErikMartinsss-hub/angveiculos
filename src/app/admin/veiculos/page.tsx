@@ -31,7 +31,8 @@ export default async function AdminVeiculos() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-        <table className="w-full text-sm">
+        {/* Desktop table */}
+        <table className="w-full text-sm hidden md:table">
           <thead className="bg-gray-50 text-left">
             <tr>
               <th className="px-4 py-3 font-medium">Veículo</th>
@@ -84,6 +85,50 @@ export default async function AdminVeiculos() {
             ))}
           </tbody>
         </table>
+
+        {/* Mobile cards */}
+        <div className="md:hidden divide-y">
+          {vehicles?.map((vehicle: Vehicle) => (
+            <div key={vehicle.id} className="p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-gray-900">
+                  {vehicle.marca} {vehicle.modelo}
+                </span>
+                <span
+                  className={`text-xs px-2 py-1 rounded ${
+                    vehicle.status === "disponivel"
+                      ? "bg-green-100 text-green-700"
+                      : vehicle.status === "vendido"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-yellow-100 text-yellow-700"
+                  }`}
+                >
+                  {vehicle.status}
+                </span>
+              </div>
+              <div className="flex items-center gap-4 text-sm text-gray-500">
+                <span>{vehicle.ano_fabricacao}</span>
+                <span>{vehicle.km.toLocaleString("pt-BR")} km</span>
+                <span className="font-semibold text-gray-900">
+                  {new Intl.NumberFormat("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  }).format(vehicle.preco)}
+                </span>
+              </div>
+              <div className="flex gap-3 pt-1">
+                <Link
+                  href={`/admin/veiculos/${vehicle.id}/edit`}
+                  className="text-blue-600 hover:underline text-sm font-medium"
+                >
+                  Editar
+                </Link>
+                <DeleteButton id={vehicle.id} />
+              </div>
+            </div>
+          ))}
+        </div>
+
         {(!vehicles || vehicles.length === 0) && (
           <p className="text-gray-500 text-center py-8">
             Nenhum veículo cadastrado.

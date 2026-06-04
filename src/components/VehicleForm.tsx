@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import type { Vehicle } from "@/lib/types";
 import { getMarcas, getModelos } from "@/data/carros";
+import { Search } from "lucide-react";
 
 type Props = {
   vehicle?: Vehicle | null;
@@ -48,9 +49,52 @@ export default function VehicleForm({ vehicle }: Props) {
     vehicle?.fotos ?? []
   );
   const [loading, setLoading] = useState(false);
+  const [fipeLoading, setFipeLoading] = useState(false);
 
   const marcas = getMarcas(form.categoria);
   const modelos = form.marca ? getModelos(form.categoria, form.marca) : [];
+
+  async function buscarPrecoFipe() {
+    if (!form.marca || !form.modelo || !form.ano_fabricacao) {
+      alert("Selecione marca, modelo e ano primeiro");
+      return;
+    }
+    setFipeLoading(true);
+    try {
+      const res = await fetch("/api/fipe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          marca: form.marca,
+          modelo: form.modelo,
+          ano: form.ano_fabricacao,
+          categoria: form.categoria,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Erro ao buscar preço FIPE");
+        return;
+      }
+      updateField("preco", data.fipe);
+      if (data.combustivel && !form.combustivel) {
+        const map: Record<string, string> = {
+          Gasolina: "Gasolina",
+          Etanol: "Etanol",
+          Flex: "Flex",
+          Diesel: "Diesel",
+          Elétrico: "Elétrico",
+          Híbrido: "Híbrido",
+        };
+        const combustivel = map[data.combustivel];
+        if (combustivel) updateField("combustivel", combustivel);
+      }
+    } catch {
+      alert("Erro de conexão ao buscar FIPE");
+    } finally {
+      setFipeLoading(false);
+    }
+  }
 
   function updateField(field: string, value: any) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -245,14 +289,25 @@ export default function VehicleForm({ vehicle }: Props) {
         </Field>
 
         <Field label="Preço (R$)" required>
-          <input
-            type="number"
-            step="0.01"
-            value={form.preco}
-            onChange={(e) => updateField("preco", Number(e.target.value))}
-            className="w-full border rounded-lg px-3 py-2"
-            required
-          />
+          <div className="flex gap-2">
+            <input
+              type="number"
+              step="0.01"
+              value={form.preco}
+              onChange={(e) => updateField("preco", Number(e.target.value))}
+              className="flex-1 border rounded-lg px-3 py-2"
+              required
+            />
+            <button
+              type="button"
+              onClick={buscarPrecoFipe}
+              disabled={fipeLoading}
+              className="flex items-center gap-1.5 bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition disabled:opacity-50 whitespace-nowrap"
+            >
+              <Search size={15} />
+              {fipeLoading ? "..." : "FIPE"}
+            </button>
+          </div>
         </Field>
 
         <Field label="Combustível">
