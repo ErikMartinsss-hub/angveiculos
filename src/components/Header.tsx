@@ -45,7 +45,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
           {settings?.logo_url ? (
-            <img src={settings.logo_url} alt={siteName} className="h-10 object-contain" />
+            <img src={settings.logo_url} alt={siteName} className="h-14 object-contain" />
           ) : (
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:opacity-90 transition-colors"
