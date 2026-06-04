@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 
 export default function AdminLogin() {
@@ -41,6 +42,12 @@ export default function AdminLogin() {
         onSubmit={handleLogin}
         className="bg-white p-8 rounded-xl shadow-md w-full max-w-sm"
       >
+        <Link
+          href="/"
+          className="text-sm text-gray-500 hover:text-gray-700 mb-4 inline-block"
+        >
+          ← Voltar para Home
+        </Link>
         <h1 className="text-2xl font-bold text-center mb-6">Admin - Login</h1>
 
         {error && (
