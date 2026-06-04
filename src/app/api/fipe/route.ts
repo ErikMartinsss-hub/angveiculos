@@ -2,14 +2,12 @@ import { NextResponse } from "next/server";
 
 const BASE = "https://fipe.parallelum.com.br/api/v2";
 
-function authHeaders() {
-  const key = process.env.FIPE_API_KEY;
-  if (!key) return {};
-  return { Authorization: `Bearer ${key}` };
-}
-
 async function fetchJson(url: string) {
-  const res = await fetch(url, { headers: { ...authHeaders() }, next: { revalidate: 86400 } });
+  const headers: Record<string, string> = {};
+  if (process.env.FIPE_API_KEY) {
+    headers.Authorization = `Bearer ${process.env.FIPE_API_KEY}`;
+  }
+  const res = await fetch(url, { headers, next: { revalidate: 86400 } });
   if (!res.ok) return null;
   return res.json();
 }
