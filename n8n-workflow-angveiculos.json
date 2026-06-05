@@ -1,0 +1,138 @@
+{
+  "name": "Agente AngVeículos - WhatsApp + Gemini",
+  "nodes": [
+    {
+      "id": "whatsapp-trigger",
+      "name": "Receber Mensagem WhatsApp",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.2,
+      "position": [250, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "angveiculos-webhook",
+        "options": {}
+      }
+    },
+    {
+      "id": "extract-message",
+      "name": "Extrair Texto",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [450, 300],
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "userMessage",
+              "value": "={{ $json.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body || $json.body.text?.body || $json.body.message }}"
+            },
+            {
+              "name": "userPhone",
+              "value": "={{ $json.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from || $json.body.from || '' }}"
+            },
+            {
+              "name": "userName",
+              "value": "={{ $json.body.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.profile?.name || $json.body.profileName || 'Cliente' }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini - Responder",
+      "type": "@n8n/n8n-nodes-langchain.memoryChat",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "parameters": {
+        "model": "gemini-2.0-flash",
+        "apiKey": "={{ $credentials.googleAiApiKey }}",
+        "systemPrompt": "Você é o atendente virtual da AngVeículos, uma agência de veículos seminovos. Responda de forma educada, acolhedora e profissional.\n\nINFORMAÇÕES DA EMPRESA:\n- Nome: Ang Veículos\n- Tipo: Agência de veículos seminovos (carros e motos)\n- Qualidade e procedência em cada veículo\n\nCONTATOS:\n- WhatsApp Anizio: (11) 94783-1797\n- WhatsApp Gabriel: (11) 94239-8993\n\nHORÁRIO:\n- Seg a Sex: 9h às 18h\n- Sábado: 9h às 13h\n\nREGRAS:\n- Se perguntarem sobre veículos disponíveis, peça para acessar o site e ver o estoque atualizado\n- Se perguntarem sobre preços, diga que os valores estão no site e que podem negociar com a equipe de vendas\n- Se for agendamento de visita, peça nome completo, telefone, qual veículo tem interesse e melhor horário. Depois confirme que a equipe entrará em contato\n- Se for proposta de venda (querer vender o veículo), passe o contato dos vendedores\n- Se não souber responder, transfira para atendente humano\n- NÃO invente informações sobre veículos específicos, estoque ou preços\n- Sempre use tom amigável e profissional\n\nQuando identificar que o cliente quer agendar visita ou falar com vendedor, direcione para um dos WhatsApps: (11) 94783-1797 (Anizio) ou (11) 94239-8993 (Gabriel).",
+        "maxTokens": 500,
+        "temperature": 0.7
+      }
+    },
+    {
+      "id": "check-response",
+      "name": "Verificar Resposta",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [850, 300],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.output?.toLowerCase() }}",
+              "operation": "contains",
+              "value2": "não sei responder"
+            }
+          ],
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "rightValue": ""
+          },
+          "number": [],
+          "boolean": []
+        }
+      }
+    },
+    {
+      "id": "whatsapp-send-ai",
+      "name": "Enviar Resposta IA",
+      "type": "n8n-nodes-base.waBusinessApi",
+      "typeVersion": 1,
+      "position": [1050, 200],
+      "parameters": {
+        "phoneNumberId": "={{ $credentials.whatsappBusinessApi.phoneNumberId }}",
+        "to": "={{ $node['Extrair Texto'].json.userPhone }}",
+        "text": "={{ $json.output || $json.message }}",
+        "resource": "message",
+        "operation": "send"
+      }
+    },
+    {
+      "id": "notify-human",
+      "name": "Notificar Humano",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1050, 450],
+      "parameters": {
+        "chatId": "={{ $credentials.telegramApi.chatId }}",
+        "text": "🚨 *AngVeículos - IA não conseguiu responder*\n\n*Cliente:* {{ $node['Extrair Texto'].json.userName }}\n*Telefone:* {{ $node['Extrair Texto'].json.userPhone }}\n*Pergunta:* {{ $node['Extrair Texto'].json.userMessage }}\n\n*Resposta da IA:* {{ $node['Gemini - Responder'].json.output }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Receber Mensagem WhatsApp": {
+      "main": [
+        [{ "node": "Extrair Texto", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extrair Texto": {
+      "main": [
+        [{ "node": "Gemini - Responder", "type": "main", "index": 0 }]
+      ]
+    },
+    "Gemini - Responder": {
+      "main": [
+        [{ "node": "Verificar Resposta", "type": "main", "index": 0 }]
+      ]
+    },
+    "Verificar Resposta": {
+      "main": [
+        [{ "node": "Enviar Resposta IA", "type": "main", "index": 0 }],
+        [{ "node": "Notificar Humano", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "pinData": {},
+  "versionId": "1.0",
+  "active": true,
+  "settings": {},
+  "tags": []
+}
