@@ -2,7 +2,7 @@
 
 Plataforma completa de compra e venda de veículos com painel administrativo, cadastro de clientes, agendamento de visitas e integração com WhatsApp.
 
-## 🛠 Stack
+##  Stack
 
 | Tecnologia | Uso |
 |------------|-----|
