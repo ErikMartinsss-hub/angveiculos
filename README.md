@@ -1,4 +1,4 @@
-# 🚗 AngVeículos
+#  AngVeículos
 
 Plataforma completa de compra e venda de veículos com painel administrativo, cadastro de clientes, agendamento de visitas e integração com WhatsApp.
 
@@ -12,7 +12,7 @@ Plataforma completa de compra e venda de veículos com painel administrativo, ca
 | **Supabase** | PostgreSQL, Auth, Storage |
 | **Vercel** | Hospedagem |
 
-## ✨ Funcionalidades
+##  Funcionalidades
 
 ### Público
 - Home com busca por nome, filtro por categoria (carros/motos) e veículos em destaque
@@ -41,7 +41,7 @@ Plataforma completa de compra e venda de veículos com painel administrativo, ca
   - Visitas agendadas (confirmar/cancelar)
 - Atividade recente em tempo real
 
-## 📦 Modelo de Dados
+##  Modelo de Dados
 
 ```mermaid
 erDiagram
@@ -128,7 +128,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_anon
 SUPABASE_SERVICE_KEY=sua_chave_service_role
 ```
 
-## 📁 Estrutura
+##  Estrutura
 
 ```
 src/
@@ -150,7 +150,7 @@ src/
 └── lib/                 # Clientes Supabase, tipos
 ```
 
-## 🌐 Deploy
+##  Deploy
 
 O projeto está configurado para deploy na **Vercel** com `vercel.json`:
 
@@ -169,4 +169,4 @@ MIT
 
 ---
 
-Feito com ❤️ por [Erik Martins](https://github.com/ErikMartinsss-hub)
+Feito  por [Erik Martins](https://github.com/ErikMartinsss-hub)
