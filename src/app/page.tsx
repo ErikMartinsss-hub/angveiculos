@@ -24,6 +24,11 @@ export default async function Home() {
   const heroHighlightColor = siteSettings?.hero_highlight_color ?? "#ef4444";
   const heroBtnOutline = siteSettings?.hero_btn_outline ?? "#9ca3af";
   const heroBtnOutlineHover = siteSettings?.hero_btn_outline_hover ?? "#ef4444";
+  const telefone1 = siteSettings?.telefone1 ?? "11947831797";
+  const nome1 = siteSettings?.nome1 ?? "Anizio";
+  const telefone2 = siteSettings?.telefone2 ?? "11942398993";
+  const nome2 = siteSettings?.nome2 ?? "Gabriel";
+  const endereco = siteSettings?.endereco ?? "";
 
   const disponiveis = vehicles?.filter((v: Vehicle) => v.status === "disponivel") ?? [];
   const destaques = disponiveis.filter((v: Vehicle) => v.destaque);
@@ -55,18 +60,18 @@ export default async function Home() {
                 Ver veículos disponíveis
               </a>
               <a
-                href="https://wa.me/5511947831797"
+                href={`https://wa.me/55${telefone1}`}
                 target="_blank"
                 className="hero-btn-outline border px-8 py-3.5 rounded-xl font-semibold transition text-sm"
               >
-                Falar com Anizio
+                Falar com {nome1}
               </a>
               <a
-                href="https://wa.me/5511942398993"
+                href={`https://wa.me/55${telefone2}`}
                 target="_blank"
                 className="hero-btn-outline border px-8 py-3.5 rounded-xl font-semibold transition text-sm"
               >
-                Falar com Gabriel
+                Falar com {nome2}
               </a>
             </div>
           </div>
@@ -106,18 +111,18 @@ export default async function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <a
-              href="https://wa.me/5511947831797"
+              href={`https://wa.me/55${telefone1}`}
               target="_blank"
               className="btn-primary inline-block"
             >
-              Falar com Anizio
+              Falar com {nome1}
             </a>
             <a
-              href="https://wa.me/5511942398993"
+              href={`https://wa.me/55${telefone2}`}
               target="_blank"
               className="btn-primary inline-block"
             >
-              Falar com Gabriel
+              Falar com {nome2}
             </a>
           </div>
         </div>
@@ -125,7 +130,7 @@ export default async function Home() {
 
       <footer style={{ backgroundColor: footerBg, borderColor: footerTextColor + "30" }} className="border-t">
         <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: "var(--primary)" }}>
@@ -144,13 +149,21 @@ export default async function Home() {
             <div>
               <h4 className="font-semibold mb-4" style={{ color: "#ffffff" }}>Contato</h4>
               <div className="space-y-2 text-sm" style={{ color: footerTextColor }}>
-                <p>(11) 947831797</p>
-                <p>Contato Anizio  </p>
-                <br></br>
-                <p>(11) 942398993</p>
-                <p>Contato Gabriel</p>
+                <p>({telefone1.slice(0,2)}) {telefone1.slice(2)}</p>
+                <p>Contato {nome1}</p>
+                <br />
+                <p>({telefone2.slice(0,2)}) {telefone2.slice(2)}</p>
+                <p>Contato {nome2}</p>
               </div>
             </div>
+            {endereco && (
+              <div>
+                <h4 className="font-semibold mb-4" style={{ color: "#ffffff" }}>Endereço</h4>
+                <div className="space-y-2 text-sm" style={{ color: footerTextColor }}>
+                  <p>{endereco}</p>
+                </div>
+              </div>
+            )}
             <div>
               <h4 className="font-semibold mb-4" style={{ color: "#ffffff" }}>Horário</h4>
               <div className="space-y-2 text-sm" style={{ color: footerTextColor }}>

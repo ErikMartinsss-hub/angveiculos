@@ -11,7 +11,7 @@ export async function GET() {
 
   if (error) {
     return NextResponse.json(
-      { nome: "Ang Veículos", primary_color: "#dc2626", logo_url: null, header_bg: "#ffffff", header_text_color: "#111827", footer_bg: "#111827", footer_text_color: "#9ca3af", hero_bg: "#111827", hero_text_color: "#ffffff", hero_desc_color: "#9ca3af", hero_highlight_color: "#ef4444", hero_btn_outline: "#9ca3af", hero_btn_outline_hover: "#ef4444" },
+      { nome: "Ang Veículos", primary_color: "#dc2626", logo_url: null, header_bg: "#ffffff", header_text_color: "#111827", footer_bg: "#111827", footer_text_color: "#9ca3af", hero_bg: "#111827", hero_text_color: "#ffffff", hero_desc_color: "#9ca3af", hero_highlight_color: "#ef4444", hero_btn_outline: "#9ca3af", hero_btn_outline_hover: "#ef4444", telefone1: "11947831797", nome1: "Anizio", telefone2: "11942398993", nome2: "Gabriel", endereco: "" },
       { status: 200 }
     );
   }
@@ -27,12 +27,12 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { nome, logo_url, primary_color, header_bg, header_text_color, footer_bg, footer_text_color, hero_bg, hero_text_color, hero_desc_color, hero_highlight_color, hero_btn_outline, hero_btn_outline_hover } = body;
+  const { nome, logo_url, primary_color, header_bg, header_text_color, footer_bg, footer_text_color, hero_bg, hero_text_color, hero_desc_color, hero_highlight_color, hero_btn_outline, hero_btn_outline_hover, telefone1, nome1, telefone2, nome2, endereco } = body;
 
   const service = createServiceClient();
   const { error } = await service
     .from("site_settings")
-    .upsert({ id: 1, nome, logo_url, primary_color, header_bg, header_text_color, footer_bg, footer_text_color, hero_bg, hero_text_color, hero_desc_color, hero_highlight_color, hero_btn_outline, hero_btn_outline_hover, updated_at: new Date().toISOString() });
+    .upsert({ id: 1, nome, logo_url, primary_color, header_bg, header_text_color, footer_bg, footer_text_color, hero_bg, hero_text_color, hero_desc_color, hero_highlight_color, hero_btn_outline, hero_btn_outline_hover, telefone1, nome1, telefone2, nome2, endereco, updated_at: new Date().toISOString() });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

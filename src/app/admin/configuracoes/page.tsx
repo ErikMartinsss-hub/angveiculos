@@ -19,6 +19,11 @@ type Settings = {
   hero_highlight_color: string;
   hero_btn_outline: string;
   hero_btn_outline_hover: string;
+  telefone1: string;
+  nome1: string;
+  telefone2: string;
+  nome2: string;
+  endereco: string;
 };
 
 export default function AdminConfig() {
@@ -36,6 +41,11 @@ export default function AdminConfig() {
     hero_highlight_color: "#ef4444",
     hero_btn_outline: "#9ca3af",
     hero_btn_outline_hover: "#ef4444",
+    telefone1: "11947831797",
+    nome1: "Anizio",
+    telefone2: "11942398993",
+    nome2: "Gabriel",
+    endereco: "",
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -356,6 +366,70 @@ export default function AdminConfig() {
                 </div>
               </div>
             </div>
+        </div>
+
+        <div className="mb-5 border-t pt-5">
+          <h3 className="font-semibold text-gray-900 mb-3">Contato</h3>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Nome 1</label>
+                <input
+                  type="text"
+                  value={settings.nome1}
+                  onChange={(e) => setSettings({ ...settings, nome1: e.target.value })}
+                  className="w-full border rounded-lg px-3 py-2"
+                  placeholder="Ex: Anizio"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Telefone 1 (WhatsApp)</label>
+                <input
+                  type="text"
+                  value={settings.telefone1}
+                  onChange={(e) => setSettings({ ...settings, telefone1: e.target.value })}
+                  className="w-full border rounded-lg px-3 py-2"
+                  placeholder="Ex: 11947831797"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Nome 2</label>
+                <input
+                  type="text"
+                  value={settings.nome2}
+                  onChange={(e) => setSettings({ ...settings, nome2: e.target.value })}
+                  className="w-full border rounded-lg px-3 py-2"
+                  placeholder="Ex: Gabriel"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Telefone 2 (WhatsApp)</label>
+                <input
+                  type="text"
+                  value={settings.telefone2}
+                  onChange={(e) => setSettings({ ...settings, telefone2: e.target.value })}
+                  className="w-full border rounded-lg px-3 py-2"
+                  placeholder="Ex: 11942398993"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-5 border-t pt-5">
+          <h3 className="font-semibold text-gray-900 mb-3">Endereço</h3>
+          <div>
+            <label className="block text-sm font-medium mb-1">Endereço completo</label>
+            <textarea
+              value={settings.endereco}
+              onChange={(e) => setSettings({ ...settings, endereco: e.target.value })}
+              className="w-full border rounded-lg px-3 py-2"
+              rows={3}
+              placeholder="Ex: Rua Exemplo, 123 - Centro - São Paulo/SP"
+            />
+          </div>
         </div>
 
         {message && (
